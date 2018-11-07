@@ -23,7 +23,13 @@ then
     exit 0
 fi
 
+# Webhook
 webhook_url="$(jq -r '.source.url' < "${payload}")"
+# API
+slack_url_post="https://slack.com/api/chat.postMessage"
+slack_url_search="https://slack.com/api/search.messages"
+token="$(jq -r '.source.url' < "${payload}")"
+
 allow_insecure="$(jq -r '.source.insecure // "false"' < "${payload}")"
 raw_ca_certs=$(jq -r '.source.ca_certs // []' < $payload)
 
