@@ -23,10 +23,17 @@ then
     exit 0
 fi
 
+# Extract configration from the source / ressources-level
+## webhook_url conf
 webhook_url="$(jq -r '.source.url' < "${payload}")"
+## bot conf
+bot_token="$(jq -r '.source.bot_token' < "${payload}")"
+bot_query="$(jq -r '.source.bot_query' < "${payload}")"
+## General conf
 allow_insecure="$(jq -r '.source.insecure // "false"' < "${payload}")"
 raw_ca_certs=$(jq -r '.source.ca_certs // []' < $payload)
 
+# Extract configration from the params / Jobs-level
 text_file="$(jq -r '.params.text_file // ""' < "${payload}")"
 text="$(jq -r '(.params.text // "${TEXT_FILE_CONTENT}")' < "${payload}")"
 username="$(jq '(.params.username // null)' < "${payload}")"
@@ -49,6 +56,10 @@ redact_hook="$(jq -r '.params.redact_hook_url // "true"' < "${payload}")"
 proxy="$(jq -r '.source.proxy // "null"' < "${payload}")"
 proxy_https_tunnel="$(jq -r '.source.proxy_https_tunnel // "false"' < "${payload}")"
 
+
+# ===================================
+#           Post-Processing          
+# ====================================
 # Read the env_file and export it in the current console
 env_file="$(jq -r '.params.env_file // ""' < "${payload}")"
 if [ -f "$env_file" ]; then
